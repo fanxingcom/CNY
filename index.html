@@ -52,7 +52,7 @@
             font-weight: bold;
             transition: all 0.1s;
             position: relative;
-            font-size: 1.5vw;
+            font-size: calc(2vw + 2vh);
             border: 1px solid #8c0404;
             box-sizing: border-box;
         }
@@ -75,21 +75,21 @@
 
         .mine::after {
             content: "😔";
-            font-size: 1.5vw;
+            font-size: inherit;
             position: absolute;
         }
 
         .flag::after {
             content: "🐍";
             position: absolute;
-            font-size: 1.5vw;
+            font-size: inherit;
             top: 2px;
             left: 4px;
         }
 
         .number {
             color: red;
-            font-size: 1.5vw;
+            font-size: inherit;
         }
 
         #restart {
@@ -117,20 +117,21 @@
     <h2>🌟新春扫雷，清除烦恼，迎接好运！🌟</h2>
     <div id="header">
         <div class="counter">剩余: <span id="flags-left">15</span></div>
-        <div class="counter">地雷: 3</div>
+        <div class="counter">地雷: <span id="mine-count">0</span></div>
     </div>
     <div id="game"></div>
     <button id="restart">开始新年</button>
 
     <script>
         const SIZE = 10;
-        const MINES = 3;
+        let MINES = 0;
         let board = [];
         let gameOver = false;
-        let flagsLeft = MINES;
+        let flagsLeft = 0;
 
         function initGame() {
             gameOver = false;
+            MINES = Math.floor(Math.random() * 7) + 3;
             flagsLeft = MINES;
             updateFlagCounter();
             
@@ -153,6 +154,7 @@
                 }
             }
 
+            document.getElementById('mine-count').textContent = MINES;
             calculateNumbers();
             renderBoard();
         }
