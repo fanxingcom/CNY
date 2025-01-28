@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>增强版扫雷</title>
+    <title>辛光祝福您新春快乐</title>
     <style>
         body {
             display: flex;
             flex-direction: column;
             align-items: center;
-            background: #ff4d4d; /* 红色背景 */
+            background: #ff4d4d;
             font-family: Arial, sans-serif;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
         }
 
         #header {
@@ -27,19 +30,21 @@
 
         #game {
             display: grid;
-            grid-template-columns: repeat(10, 35px); /* 创建10列的网格 */
-            gap: 1px; /* 单元格之间的间隙 */
-            background: #f7f3d0; /* 浅黄色背景 */
-            padding: 1px;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 2px;
+            width: 90vw;
+            max-width: 600px;
+            background: #f7f3d0;
+            padding: 2px;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            border: 2px solid #000000; /* 棋盘边框颜色 */
+            border: 2px solid #000000;
         }
 
         .cell {
-            width: 35px;
-            height: 35px;
-            background: #ffe9b8; /* 单元格背景颜色 */
+            width: 100%;
+            aspect-ratio: 1;
+            background: #ffe9b8;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -47,16 +52,17 @@
             font-weight: bold;
             transition: all 0.1s;
             position: relative;
-            font-size: 18px;
-            border: 1px solid #8c0404; /* 棋盘经纬线颜色 */
+            font-size: 1.5vw;
+            border: 1px solid #8c0404;
+            box-sizing: border-box;
         }
 
         .cell:hover {
-            filter: brightness(1.1); /* 鼠标悬停效果 */
+            filter: brightness(1.1);
         }
 
         .revealed {
-            background: #ffcc00; /* 被揭示的单元格背景颜色 */
+            background: #ffcc00;
         }
 
         .revealed span {
@@ -64,32 +70,32 @@
         }
 
         .mine {
-            background: #a8a192 !important; /* 地雷单元格背景颜色 */
+            background: #a8a192 !important;
         }
 
         .mine::after {
-            content: "😔"; /* 地雷单元格显示的表情符号 */
-            font-size: 20px;
+            content: "😔";
+            font-size: 1.5vw;
             position: absolute;
         }
 
         .flag::after {
-            content: "🐍"; /* 标记旗帜的表情符号 */
+            content: "🐍";
             position: absolute;
-            font-size: 20px;
+            font-size: 1.5vw;
             top: 2px;
             left: 4px;
         }
 
         .number {
-            color: red; /* 数字颜色 */
-            font-size: 18px;
+            color: red;
+            font-size: 1.5vw;
         }
 
         #restart {
             margin-top: 20px;
             padding: 10px 25px;
-            background: #4CAF50; /* 按钮背景颜色 */
+            background: #4CAF50;
             color: white;
             border: none;
             border-radius: 5px;
@@ -97,42 +103,46 @@
             font-size: 16px;
             transition: background 0.3s;
         }
+
+        #main-title {
+            font-size: 5vw;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    <h2>🌟辛光祝福您新春快乐🐍🌟</h2>
+    <h2 id="main-title">🌟辛光祝福您新春快乐🐍🌟</h2>
     <h2>🌟新春扫雷，清除烦恼，迎接好运！🌟</h2>
     <div id="header">
-        <div class="counter">剩余: <span id="flags-left">15</span></div> <!-- 显示剩余旗帜 -->
-        <div class="counter">地雷: 3</div> <!-- 显示地雷总数 -->
+        <div class="counter">剩余: <span id="flags-left">15</span></div>
+        <div class="counter">地雷: 3</div>
     </div>
-    <div id="game"></div> <!-- 游戏棋盘 -->
-    <button id="restart">开始新年</button> <!-- 重启游戏按钮 -->
+    <div id="game"></div>
+    <button id="restart">开始新年</button>
 
     <script>
-        const SIZE = 20;    // 棋盘大小
-        const MINES = 3;   // 地雷总数
+        const SIZE = 10;
+        const MINES = 3;
         let board = [];
         let gameOver = false;
         let flagsLeft = MINES;
 
-        // 初始化游戏
         function initGame() {
             gameOver = false;
             flagsLeft = MINES;
             updateFlagCounter();
             
-            // 创建棋盘数据结构
             board = Array(SIZE).fill().map(() => 
                 Array(SIZE).fill().map(() => ({
-                    isMine: false, // 是否是地雷
-                    revealed: false, // 是否已被揭示
-                    flagged: false, // 是否被标记旗帜
-                    neighborMines: 0 // 周围地雷数量
+                    isMine: false,
+                    revealed: false,
+                    flagged: false,
+                    neighborMines: 0
                 }))
             );
 
-            // 布置地雷
             let minesPlaced = 0;
             while (minesPlaced < MINES) {
                 const x = Math.floor(Math.random() * SIZE);
@@ -143,12 +153,10 @@
                 }
             }
 
-            // 计算相邻地雷数
             calculateNumbers();
             renderBoard();
         }
 
-        // 计算数字
         function calculateNumbers() {
             for (let x = 0; x < SIZE; x++) {
                 for (let y = 0; y < SIZE; y++) {
@@ -159,7 +167,6 @@
             }
         }
 
-        // 计算周围地雷数
         function countNeighborMines(x, y) {
             let count = 0;
             for (let dx = -1; dx <= 1; dx++) {
@@ -174,7 +181,6 @@
             return count;
         }
 
-        // 渲染棋盘
         function renderBoard() {
             const game = document.getElementById('game');
             game.innerHTML = '';
@@ -211,14 +217,13 @@
             }));
         }
 
-        // 左键点击
         function handleLeftClick(x, y) {
             if (gameOver || board[x][y].flagged) return;
             
             if (board[x][y].isMine) {
                 gameOver = true;
                 revealAll();
-                showMessage('再来一次去掉不开心🤯');
+                showMessage('再来一次清除烦恼，迎接好运！🤯');
                 return;
             }
             
@@ -226,7 +231,6 @@
             checkWin();
         }
 
-        // 右键点击
         function handleRightClick(x, y) {
             if (gameOver || board[x][y].revealed) return;
             
@@ -238,7 +242,6 @@
             renderBoard();
         }
 
-        // 递归揭示单元格
         function reveal(x, y) {
             if (x < 0 || x >= SIZE || y < 0 || y >= SIZE) return;
             if (board[x][y].revealed || board[x][y].flagged) return;
@@ -256,13 +259,11 @@
             renderBoard();
         }
 
-        // 显示所有地雷
         function revealAll() {
             board.forEach(row => row.forEach(cell => cell.revealed = true));
             renderBoard();
         }
 
-        // 检查胜利条件
         function checkWin() {
             let allSafeRevealed = true;
             let allMinesFlagged = true;
@@ -278,17 +279,35 @@
             }
         }
 
-        // 更新旗帜计数器
         function updateFlagCounter() {
             document.getElementById('flags-left').textContent = flagsLeft;
         }
 
-        // 显示消息
         function showMessage(msg) {
-            setTimeout(() => alert(msg), 10);
+            setTimeout(() => {
+                const messageDiv = document.createElement('div');
+                messageDiv.style.position = 'fixed';
+                messageDiv.style.top = '50%';
+                messageDiv.style.left = '50%';
+                messageDiv.style.transform = 'translate(-50%, -50%)';
+                messageDiv.style.backgroundColor = '#fff';
+                messageDiv.style.padding = '20px';
+                messageDiv.style.border = '2px solid #000';
+                messageDiv.style.borderRadius = '10px';
+                messageDiv.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+                messageDiv.style.fontSize = '3vw';
+                messageDiv.style.zIndex = '1000';
+                messageDiv.style.textAlign = 'center';
+                messageDiv.textContent = msg;
+
+                document.body.appendChild(messageDiv);
+
+                setTimeout(() => {
+                    document.body.removeChild(messageDiv);
+                }, 3000);
+            }, 10);
         }
 
-        // 初始化游戏
         document.getElementById('restart').addEventListener('click', initGame);
         initGame();
     </script>
